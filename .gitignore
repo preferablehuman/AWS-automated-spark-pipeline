@@ -1,0 +1,7 @@
+*.csv
+*.tfstate
+*.tfstate.backup
+*tfplan
+*.tfvars
+*.terraform.*
+*/.terraform/*

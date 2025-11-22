@@ -1,0 +1,54 @@
+# Official Spark base; pick the closest to your current Spark
+FROM apache/spark:3.5.1-scala2.12-java17-python3-ubuntu
+
+# Keep paths tidy and compatible with your old layout
+ENV SPARK_HOME=/opt/spark \
+    # HADOOP_HOME=/opt/hadoop \
+    PYSPARK_PYTHON=python3 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    APP_HOME=/app
+    # PATH="$SPARK_HOME/bin:$HADOOP_HOME/bin:$PATH"
+WORKDIR $APP_HOME
+
+USER root
+
+# Make sure the spark user's home exists and is writable (pip caches here sometimes)
+RUN mkdir -p /home/spark && chown -R spark:spark /home/spark
+
+COPY . .
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+RUN set -eux; JDIR="$SPARK_HOME/jars"; \
+  curl -fsSL -o $JDIR/hadoop-aws-3.3.6.jar \
+    https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.6/hadoop-aws-3.3.6.jar; \
+  curl -fsSL -o $JDIR/aws-java-sdk-bundle-1.12.691.jar \
+    https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.691/aws-java-sdk-bundle-1.12.691.jar; \
+  curl -fsSL -o $JDIR/spark-hadoop-cloud_2.12-3.5.1.jar \
+    https://repo1.maven.org/maven2/org/apache/spark/spark-hadoop-cloud_2.12/3.5.1/spark-hadoop-cloud_2.12-3.5.1.jar;
+  # curl -fsSL -o /app/jars/postgresql-42.7.5.jar \
+  #   https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.5/postgresql-42.7.5.jar
+
+RUN mkdir -p /opt/spark/conf && \
+  printf '%s\n' \
+  'spark.hadoop.fs.s3a.fast.upload=true' \
+  'spark.hadoop.fs.s3a.path.style.access=true' \
+  'spark.hadoop.fs.s3a.connection.maximum=200' \
+  'spark.serializer=org.apache.spark.serializer.KryoSerializer' \
+  > /opt/spark/conf/spark-defaults.conf
+
+USER spark
+
+
+
+# CMD ["uvicorn","server:app","--host","0.0.0.0","--port","8080"]
+
+
+ENTRYPOINT []
+
+
+# Keep the contract simple: spark-submit + your main script
+# Your docker-compose "command:" (if any) will be appended to this CMD as args.
+CMD ["/opt/spark/bin/spark-submit", "--master", "local[*]", "--jars", "/app/jars/postgresql-42.7.5.jar", "/app/NYUTaxiSparkJob.py"]
+
+EXPOSE 4040

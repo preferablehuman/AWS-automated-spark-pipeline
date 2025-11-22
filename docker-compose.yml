@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  spark:
+    build: ./spark/.
+    # volumes:
+      # - ./archive:/app/archive
+      # - ./config:/app/config
+      # - ./checkpoint:/app/checkpoint
+    ports:
+      - "4040:4040"
+
+  # postgres:
+  #   image: postgres:latest
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: postgres
+  #   ports:
+  #     - "5400:5432"
+  #   volumes:
+  #     - ./postgres_data:/var/lib/postgresql
+  #   networks:
+  #     - spark_postgres_net
+  
+  # flaskapp:
+  #   build: ./flask_app/.
+  #   volumes:
+  #     - ./config:/app/config
+  #     - ./visualization_code:/app/code
+  #     - ./flaskstatic:/app/static
+  #   ports:
+  #     - "5000:5000"
