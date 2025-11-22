@@ -154,6 +154,7 @@ db_username      = "postgres"
 db_password      = "your_password"
 db_name          = "nyutaxi"
 allowed_ip_cidr  = "YOUR_PUBLIC_IP/32"
+ecs_spark_image = "ECS repo url to the docker image latest tag"
 ```
 
 ---
