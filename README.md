@@ -1,11 +1,3 @@
-Below is your **complete merged `README.md`**, written in a **professional and formal tone**, combining:
-
-* the original in-depth narrative
-* the integrated **Architecture** section
-* the formal **Deployment and Execution Steps**
-* consistent formatting, structure, and clarity
-
-This is ready to be copy-pasted directly into your repository.
 
 ---
 
